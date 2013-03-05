@@ -30,19 +30,19 @@
       <section>
         <h1>Pretender</h1>
 
-<p>As an admin, there are times you want to see exactly what another user sees or take action on behalf of a user.  Pretender provides the ability to login as another user <strong>the right way</strong>.</p>
-
-<p>What is the right way?</p>
+<p>As an admin, there are times you want to see exactly what another user sees or take action on behalf of a user.  Meet Pretender.</p>
 
 <ul>
 <li>Easy to switch back and forth between roles</li>
 <li>Minimal code changes</li>
-<li>Plays nicely with auditing tools</li>
+<li>Plays nicely with auditing tools - <strong>this is crucial</strong>
+</li>
 </ul><p><a href="http://www.youtube.com/watch?v=SBjQ9tuuTJQ">Rock on</a> <img class="emoji" title=":boom:" alt=":boom:" src="https://a248.e.akamai.net/assets.github.com/images/icons/emoji/boom.png" height="20" width="20" align="absmiddle"></p>
 
 <p>Pretender is also flexible and lightweight - less than 40 lines of code :-)</p>
 
-<p>Pretender works with Rails 2.3 and above.</p>
+<p>Pretender works with Rails 2.3+ and almost any authentication system.
+(devise, authlogic, sorcery, and many more - it's agnostic)</p>
 
 <h2>Get started</h2>
 
@@ -68,7 +68,7 @@
 <span class="n">impersonate_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
 <span class="c1"># allows you to login as another user</span>
 
-<span class="n">unimpersonate_user</span>
+<span class="n">stop_impersonating_user</span>
 <span class="c1"># become yourself again</span>
 </pre></div>
 
@@ -87,7 +87,7 @@
 <h4>Sample Implementation</h4>
 
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">Admin</span><span class="o">::</span><span class="no">UsersController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
-  <span class="n">before_filter</span> <span class="ss">:require_admin</span><span class="p">,</span> <span class="ss">:except</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:unimpersonate</span><span class="o">]</span>
+  <span class="n">before_filter</span> <span class="ss">:require_admin</span><span class="p">,</span> <span class="ss">:except</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:stop_impersonating</span><span class="o">]</span>
 
   <span class="k">def</span> <span class="nf">impersonate</span>
     <span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span>
@@ -97,8 +97,8 @@
 
   <span class="c1"># do not require admin for this method if access control</span>
   <span class="c1"># is performed on the current_user instead of true_user</span>
-  <span class="k">def</span> <span class="nf">unimpersonate</span>
-    <span class="n">unimpersonate_user</span>
+  <span class="k">def</span> <span class="nf">stop_impersonating</span>
+    <span class="n">stop_impersonating_user</span>
     <span class="n">redirect_to</span> <span class="n">admin_path</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -112,7 +112,7 @@
 <span class="p">-</span> <span class="k">if</span> <span class="n">current_user</span> <span class="o">!=</span> <span class="n">true_user</span>
   <span class="nc">.alert</span>
     You (<span class="si">#{</span><span class="n">true_user</span><span class="o">.</span><span class="n">name</span><span class="si">}</span>) are logged in as <span class="si">#{</span><span class="n">current_user</span><span class="o">.</span><span class="n">name</span><span class="si">}</span>
-    <span class="p">=</span> <span class="n">link_to</span> <span class="s2">"Back to admin"</span><span class="p">,</span> <span class="n">unimpersonate_user_path</span>
+    <span class="p">=</span> <span class="n">link_to</span> <span class="s2">"Back to admin"</span><span class="p">,</span> <span class="n">stop_impersonating_user_path</span>
 </pre></div>
 
 <h3>Audits</h3>
@@ -144,7 +144,7 @@
 
 <div class="highlight"><pre><span class="n">true_account</span>
 <span class="n">impersonate_account</span>
-<span class="n">unimpersonate_account</span>
+<span class="n">stop_impersonating_account</span>
 </pre></div>
 
 <p>Also, authenticated_account is overridden with <code>EnterpriseAccount.where(:id =&gt; id).first</code></p>
