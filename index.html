@@ -1,33 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Pretender by ankane</title>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Pretender : The right way to login as another user" />
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Pretender</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Pretender</h1>
-        <p>The right way to login as another user</p>
 
-        <p class="view"><a href="https://github.com/ankane/pretender">View the Project on GitHub <small>ankane/pretender</small></a></p>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ankane/pretender">View on GitHub</a>
 
+          <h1 id="project_title">Pretender</h1>
+          <h2 id="project_tagline">The right way to login as another user</h2>
 
-        <ul>
-          <li><a href="https://github.com/ankane/pretender/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/ankane/pretender/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/ankane/pretender">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/ankane/pretender/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ankane/pretender/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h1>Pretender</h1>
 
 <p>As an admin, there are times you want to see exactly what another user sees or take action on behalf of a user.  Pretender provides the ability to login as another user <strong>the right way</strong>.</p>
@@ -68,7 +71,7 @@
 <span class="n">impersonate_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
 <span class="c1"># allows you to login as another user</span>
 
-<span class="n">unimpersonate_user</span>
+<span class="n">stop_impersonating_user</span>
 <span class="c1"># become yourself again</span>
 </pre></div>
 
@@ -87,7 +90,7 @@
 <h4>Sample Implementation</h4>
 
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">Admin</span><span class="o">::</span><span class="no">UsersController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
-  <span class="n">before_filter</span> <span class="ss">:require_admin</span><span class="p">,</span> <span class="ss">:except</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:unimpersonate</span><span class="o">]</span>
+  <span class="n">before_filter</span> <span class="ss">:require_admin</span><span class="p">,</span> <span class="ss">:except</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:stop_impersonating</span><span class="o">]</span>
 
   <span class="k">def</span> <span class="nf">impersonate</span>
     <span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span>
@@ -97,8 +100,8 @@
 
   <span class="c1"># do not require admin for this method if access control</span>
   <span class="c1"># is performed on the current_user instead of true_user</span>
-  <span class="k">def</span> <span class="nf">unimpersonate</span>
-    <span class="n">unimpersonate_user</span>
+  <span class="k">def</span> <span class="nf">stop_impersonating</span>
+    <span class="n">stop_impersonating_user</span>
     <span class="n">redirect_to</span> <span class="n">admin_path</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -112,7 +115,7 @@
 <span class="p">-</span> <span class="k">if</span> <span class="n">current_user</span> <span class="o">!=</span> <span class="n">true_user</span>
   <span class="nc">.alert</span>
     You (<span class="si">#{</span><span class="n">true_user</span><span class="o">.</span><span class="n">name</span><span class="si">}</span>) are logged in as <span class="si">#{</span><span class="n">current_user</span><span class="o">.</span><span class="n">name</span><span class="si">}</span>
-    <span class="p">=</span> <span class="n">link_to</span> <span class="s2">"Back to admin"</span><span class="p">,</span> <span class="n">unimpersonate_user_path</span>
+    <span class="p">=</span> <span class="n">link_to</span> <span class="s2">"Back to admin"</span><span class="p">,</span> <span class="n">stop_impersonating_user_path</span>
 </pre></div>
 
 <h3>Audits</h3>
@@ -144,19 +147,23 @@
 
 <div class="highlight"><pre><span class="n">true_account</span>
 <span class="n">impersonate_account</span>
-<span class="n">unimpersonate_account</span>
+<span class="n">stop_impersonating_account</span>
 </pre></div>
 
 <p>Also, authenticated_account is overridden with <code>EnterpriseAccount.where(:id =&gt; id).first</code></p>
 
 <h3>That's all folks!</h3>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/ankane">ankane</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Pretender maintained by <a href="https://github.com/ankane">ankane</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -167,6 +174,7 @@
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+
 
   </body>
 </html>
