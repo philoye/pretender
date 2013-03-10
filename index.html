@@ -110,7 +110,7 @@
 
 <p>Be sure to call <code>stop_impersonating_user</code> before the current user logs out.</p>
 
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">SessionsController</span> <span class="o">&lt;</span> <span class="ss">ActionController</span><span class="p">:</span><span class="ss">:Base</span>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">SessionsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
   <span class="k">def</span> <span class="nf">logout</span>
     <span class="c1"># it's safe to call this regardless of whether the user is being impersonated</span>
     <span class="n">stop_impersonating_user</span>
