@@ -44,6 +44,8 @@
 <p>Pretender works with Rails 2.3+ and almost any authentication system.
 (devise, authlogic, sorcery, and many more - it's agnostic)</p>
 
+<p><a href="https://www.instacart.com">Battle-tested at Instacart</a></p>
+
 <h2>Get started</h2>
 
 <p>Add this line to your application's Gemfile:</p>
@@ -55,7 +57,7 @@
 <p>And add this line to your ApplicationController:</p>
 
 <div class="highlight"><pre><span class="c1"># app/controllers/application_controller.rb</span>
-<span class="k">class</span> <span class="nc">ApplicationController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Base</span>
+<span class="k">class</span> <span class="nc">ApplicationController</span> <span class="o">&lt;</span> <span class="ss">ActionController</span><span class="p">:</span><span class="ss">:Base</span>
   <span class="n">impersonates</span> <span class="ss">:user</span>
 <span class="k">end</span>
 </pre></div>
@@ -84,7 +86,7 @@
 
 <p>Now we need to setup a way to login as another user.  <strong>Pretender makes no assumptions about how you want to do this</strong>.  I like to add this to my admin dashboard.</p>
 
-<h4>Sample Implementation</h4>
+<h3>Sample Implementation</h3>
 
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">Admin</span><span class="o">::</span><span class="no">UsersController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
   <span class="n">before_filter</span> <span class="ss">:require_admin</span><span class="p">,</span> <span class="ss">:except</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:stop_impersonating</span><span class="o">]</span>
@@ -104,9 +106,23 @@
 <span class="k">end</span>
 </pre></div>
 
+<h3>Very Important!</h3>
+
+<p>Be sure to call <code>stop_impersonating_user</code> before the current user logs out.</p>
+
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">SessionsController</span> <span class="o">&lt;</span> <span class="ss">ActionController</span><span class="p">:</span><span class="ss">:Base</span>
+  <span class="k">def</span> <span class="nf">logout</span>
+    <span class="c1"># it's safe to call this regardless of whether the user is being impersonated</span>
+    <span class="n">stop_impersonating_user</span>
+    <span class="c1"># now, log out the user</span>
+    <span class="c1"># ...</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
 <p>You may want to make it obvious to an admin when he / she is logged in as another user.  I like to add this to the application layout.</p>
 
-<h4>Haml / Slim</h4>
+<h3>Haml / Slim</h3>
 
 <div class="highlight"><pre><span class="p">-</span> <span class="c1"># app/views/layouts/application.haml</span>
 <span class="p">-</span> <span class="k">if</span> <span class="n">current_user</span> <span class="o">!=</span> <span class="n">true_user</span>
