@@ -31,68 +31,60 @@
         <h1>
 <a name="pretender" class="anchor" href="#pretender"><span class="octicon octicon-link"></span></a>Pretender</h1>
 
-<p>As an admin, there are times you want to see exactly what another user sees or take action on behalf of a user.  Meet Pretender.</p>
+<p>As an admin, there are times you want to see exactly what another user sees.  Meet Pretender.</p>
 
 <ul>
-<li>Easy to switch back and forth between roles</li>
+<li>Easily to switch between users</li>
 <li>Minimal code changes</li>
-<li>Plays nicely with auditing tools - <strong>this is crucial</strong>
-</li>
-</ul><p><a href="http://www.youtube.com/watch?v=SBjQ9tuuTJQ">Rock on</a> <img class="emoji" title=":boom:" alt=":boom:" src="https://github.global.ssl.fastly.net/images/icons/emoji/boom.png" height="20" width="20" align="absmiddle"></p>
+<li>Plays nicely with auditing tools</li>
+</ul><p><a href="http://www.youtube.com/watch?v=SBjQ9tuuTJQ">Rock on</a> <img class="emoji" title=":boom:" alt=":boom:" src="https://assets-cdn.github.com/images/icons/emoji/boom.png" height="20" width="20" align="absmiddle"></p>
 
-<p>Pretender is also flexible and lightweight - less than 40 lines of code :-)</p>
+<p>Pretender is flexible and lightweight - less than 40 lines of code :-)</p>
 
-<p>Pretender works with Rails 2.3+ and almost any authentication system.
-(devise, authlogic, sorcery, and many more - it’s agnostic)</p>
+<p>Works with Rails 2.3+ and any authentication system - <a href="https://github.com/plataformatec/devise">Devise</a>, <a href="https://github.com/binarylogic/authlogic">Authlogic</a>, and <a href="https://github.com/NoamB/sorcery">Sorcery</a> to name a few.</p>
 
 <p><a href="https://www.instacart.com">Battle-tested at Instacart</a></p>
 
 <h2>
-<a name="get-started" class="anchor" href="#get-started"><span class="octicon octicon-link"></span></a>Get started</h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
 <p>Add this line to your application’s Gemfile:</p>
 
-<div class="highlight highlight-ruby"><pre><span class="c1"># Gemfile</span>
-<span class="n">gem</span> <span class="s1">'pretender'</span>
+<div class="highlight highlight-ruby"><pre><span class="n">gem</span> <span class="s1">'pretender'</span>
 </pre></div>
 
-<p>And add this line to your ApplicationController:</p>
+<p>And add this to your <code>ApplicationController</code>:</p>
 
-<div class="highlight highlight-ruby"><pre><span class="c1"># app/controllers/application_controller.rb</span>
-<span class="k">class</span> <span class="nc">ApplicationController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Base</span>
+<div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">ApplicationController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">impersonates</span> <span class="ss">:user</span>
 <span class="k">end</span>
 </pre></div>
 
-<p>This adds three methods to your controllers:</p>
+<h2>
+<a name="how-it-works" class="anchor" href="#how-it-works"><span class="octicon octicon-link"></span></a>How It Works</h2>
 
-<div class="highlight highlight-ruby"><pre><span class="n">true_user</span>
-<span class="c1"># returns authenticated user</span>
+<p>Sign in as another user with:</p>
 
-<span class="n">impersonate_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-<span class="c1"># allows you to login as another user</span>
+<pre><code>impersonate_user(user)
+</code></pre>
 
-<span class="n">stop_impersonating_user</span>
-<span class="c1"># become yourself again</span>
+<p>The <code>current_user</code> method now returns the impersonated user.</p>
+
+<p>You can access the true user with:</p>
+
+<pre><code>true_user
+</code></pre>
+
+<p>And stop impersonating with:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">stop_impersonating_user</span>
 </pre></div>
-
-<p>And changes the behavior of another:</p>
-
-<div class="highlight highlight-ruby"><pre><span class="n">current_user</span>
-<span class="c1"># now returns:</span>
-<span class="c1"># - if impersonating, the impersonated user</span>
-<span class="c1"># - otherwise, the true user</span>
-</pre></div>
-
-<p><strong>Note:</strong> the name of this method is configurable (details at the end)</p>
-
-<p>Now we need to set up a way to login as another user.  <strong>Pretender makes no assumptions about how you want to do this</strong>.  I like to add this to my admin dashboard.</p>
 
 <h3>
 <a name="sample-implementation" class="anchor" href="#sample-implementation"><span class="octicon octicon-link"></span></a>Sample Implementation</h3>
 
 <div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">Admin</span><span class="o">::</span><span class="no">UsersController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
-  <span class="n">before_filter</span> <span class="ss">:require_admin</span>
+  <span class="n">before_filter</span> <span class="ss">:require_admin!</span>
 
   <span class="k">def</span> <span class="nf">impersonate</span>
     <span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span>
@@ -108,31 +100,24 @@
 <span class="k">end</span>
 </pre></div>
 
-<h3>
-<a name="show-admins" class="anchor" href="#show-admins"><span class="octicon octicon-link"></span></a>Show Admins</h3>
+<p>Show when someone is signed in as another user in your application layout.</p>
 
-<p>You may want to make it obvious to an admin when he / she is signed in as another user.  I like to add this to the application layout.</p>
-
-<h4>
-<a name="haml--slim" class="anchor" href="#haml--slim"><span class="octicon octicon-link"></span></a>Haml / Slim</h4>
-
-<div class="highlight highlight-haml"><pre><span class="p">-</span> <span class="c1"># app/views/layouts/application.html.haml</span>
-<span class="p">-</span> <span class="k">if</span> <span class="n">current_user</span> <span class="o">!=</span> <span class="n">true_user</span>
-  <span class="nc">.alert</span>
-    You (<span class="si">#{</span><span class="n">true_user</span><span class="o">.</span><span class="n">name</span><span class="si">}</span>) are signed in as <span class="si">#{</span><span class="n">current_user</span><span class="o">.</span><span class="n">name</span><span class="si">}</span>
-    <span class="p">=</span> <span class="n">link_to</span> <span class="s2">"Back to admin"</span><span class="p">,</span> <span class="n">stop_impersonating_path</span>
+<div class="highlight highlight-erb"><pre><span class="cp">&lt;%</span> <span class="k">if</span> <span class="n">current_user</span> <span class="o">!=</span> <span class="n">true_user</span> <span class="cp">%&gt;</span><span class="x"></span>
+<span class="x">  You (</span><span class="cp">&lt;%=</span> <span class="n">true_user</span><span class="o">.</span><span class="n">name</span> <span class="cp">%&gt;</span><span class="x">) are signed in as </span><span class="cp">&lt;%=</span> <span class="n">current_user</span><span class="o">.</span><span class="n">name</span> <span class="cp">%&gt;</span><span class="x"></span>
+<span class="x">  </span><span class="cp">&lt;%=</span> <span class="n">link_to</span> <span class="s2">"Back to admin"</span><span class="p">,</span> <span class="n">stop_impersonating_path</span> <span class="cp">%&gt;</span><span class="x"></span>
+<span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span><span class="x"></span>
 </pre></div>
 
-<h3>
-<a name="audits" class="anchor" href="#audits"><span class="octicon octicon-link"></span></a>Audits</h3>
+<h2>
+<a name="audits" class="anchor" href="#audits"><span class="octicon octicon-link"></span></a>Audits</h2>
 
-<p>If you keep audit logs with a library like <a href="https://github.com/collectiveidea/audited">audited</a>, make sure it uses the <strong>true user</strong>.</p>
+<p>If you keep audit logs with a library like <a href="https://github.com/collectiveidea/audited">Audited</a>, make sure it uses the <strong>true user</strong>.</p>
 
 <div class="highlight highlight-ruby"><pre><span class="no">Audited</span><span class="o">.</span><span class="n">current_user_method</span> <span class="o">=</span> <span class="ss">:true_user</span>
 </pre></div>
 
-<h3>
-<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h3>
+<h2>
+<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h2>
 
 <p>Pretender is super flexible.  You can change the names of methods and even impersonate multiple roles at the same time.  Here’s the default configuration.</p>
 
@@ -157,8 +142,6 @@
 <span class="n">stop_impersonating_account</span>
 </pre></div>
 
-<p>Also, authenticated_account is overridden with <code>EnterpriseAccount.where(:id =&gt; id).first</code></p>
-
 <h2>
 <a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
 
@@ -170,7 +153,7 @@
 </li>
 <li>Write, clarify, or fix documentation</li>
 <li>Suggest or add new features</li>
-</ul><p>That’s all folks!</p>
+</ul>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/ankane">ankane</a></p>
