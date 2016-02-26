@@ -6,11 +6,11 @@ require "pretender/version"
 Gem::Specification.new do |spec|
   spec.name          = "pretender"
   spec.version       = Pretender::VERSION
-  spec.authors       = ["Andrew Kane"]
-  spec.email         = ["andrew@chartkick.com"]
+  spec.authors       = ["Andrew Kane", "Alex Boster"]
+  spec.email         = ["andrew@chartkick.com", "boster@tilthouse.org"]
   spec.description   = "Simple, powerful user impersonation for Rails"
   spec.summary       = "Easy to switch back and forth between roles, minimal code changes, and plays nicely with auditing tools"
-  spec.homepage      = "https://github.com/ankane/pretender"
+  spec.homepage      = "https://github.com/tilthouse/pretender"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)

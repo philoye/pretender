@@ -13,7 +13,7 @@ module Pretender
       alias_method true_method, impersonated_method
     else
       define_method true_method do
-        ActionController::Base.instance_method(impersonated_method).bind(self).call
+        ApplicationController.instance_method(impersonated_method).bind(self).call
       end
     end
     helper_method true_method
